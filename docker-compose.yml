@@ -1,0 +1,27 @@
+version: '2'
+services:
+  openldap:
+    image: osixia/openldap:1.4.0
+    container_name: openldap
+    environment:
+      LDAP_DOMAIN: "mafernandez.code"
+      LDAP_ADMIN_PASSWORD: "admin"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "636:636"
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8080:80"
+    depends_on:
+      - openldap
